@@ -1,0 +1,19 @@
+domains:
+  - laravel
+php_version: "8.5"
+node_version: "22"
+framework: laravel
+framework_version: "13"
+secured: true
+services:
+  - mailpit
+  - mariadb-11-8:
+      preset: mariadb
+      version: "11.8"
+  - meilisearch
+  - memcached:
+      preset: memcached
+  - redis
+  - rustfs
+  - valkey:
+      preset: valkey
