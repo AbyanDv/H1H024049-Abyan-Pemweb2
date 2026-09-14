@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\MatakuliahController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,13 +16,11 @@ Route::get('/mahasiswa/{nim}', function (string $nim) {
     return 'Data mahasiswa dengan NIM ' . $nim;
 });
 
-Route::get('/matakuliah/{kode?}', function (?string $kode = null) {
-    if ($kode === null) {
-        return 'Menampilkan seluruh matakuliah';
-    }
+Route::get('/data-matakuliah', [MatakuliahController::class, 'index'])->name('matakuliah.index');
 
-    return 'Menampilkan matakuliah kode ' . $kode;
-});
+Route::get('/data-matakuliah/{kode}', [MatakuliahController::class, 'show'])->name('matakuliah.show');
+
+Route::get('/cari-matakuliah', [MatakuliahController::class, 'cari']);
 
 Route::get('/semester/{angka}', function (int $angka) {
     return 'Semester ke ' . $angka;
