@@ -34,3 +34,5 @@ Route::get('/data-mahasiswa/{nim}', [MahasiswaController::class, 'show'])->name(
 Route::get('/cari-mahasiswa', [MahasiswaController::class, 'cari']);
 
 Route::get('/mahasiswa-data', [MahasiswaWebController::class, 'index'])->name('mahasiswa.data');
+Route::get('/mahasiswa-data/ipk-tertinggi', [MahasiswaWebController::class, 'topIpk'])->name('mahasiswa.top-ipk');
+Route::get('/mahasiswa-data/{mahasiswa}', [MahasiswaWebController::class, 'show'])->name('mahasiswa.detail');

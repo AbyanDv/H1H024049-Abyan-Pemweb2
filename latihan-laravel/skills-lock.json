@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "skills": {
+    "compdf-add-watermark-remover-watermark": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-add-watermark-remover-watermark/SKILL.md",
+      "computedHash": "f380d41d6db0be6b50f25d16da3df8a54f218122475570c269efa1b74aac50aa"
+    },
+    "compdf-compress-pdf": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-compress-pdf/SKILL.md",
+      "computedHash": "1dcfd4b5e502877b0b62a6a2d5caebdccbd117e832f7a6cf5019e6f1071a3a7f"
+    },
+    "compdf-convert-images-to-documents": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-convert-images-to-documents/SKILL.md",
+      "computedHash": "0583cb6f03e36dcb548dbf304a270b82b2da01cf69d8d2d47186a9f106381bd1"
+    },
+    "compdf-documents-to-pdf": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-documents-to-pdf/SKILL.md",
+      "computedHash": "f4c19996f5e05d6d67b10ba4403fed721956a9ff088d67fefa199ed29a2f9b2c"
+    },
+    "compdf-encryt-pdf-decrypt-pdf": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-encryt-pdf-decrypt-pdf/SKILL.md",
+      "computedHash": "125bddee34bd1d1acdb8fce90269cba49dd1d2375d9b91a01dd5cfa0352ba50d"
+    },
+    "compdf-ocr": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-ocr/SKILL.md",
+      "computedHash": "0ba66cdbeca3a30d56c61dc5e2ecb033bb042081b21b1dc3e17b21595a6badd7"
+    },
+    "compdf-page-editor": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-page-editor/SKILL.md",
+      "computedHash": "e53d5f6bebc98a76e4599941911714019984f0ab688f523494d832e1e51452c8"
+    },
+    "compdf-pdf-to-html": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-pdf-to-html/SKILL.md",
+      "computedHash": "24162ef83867ce52e0cb4bbc81c5ec35e72193fe0e240a4ee426631f16f49de4"
+    },
+    "compdf-pdf-to-json": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-pdf-to-json/SKILL.md",
+      "computedHash": "cc56f6b940dcdba6b41aebf8ea5f0e2c860549c85d4d8dd531a1a4602772cc82"
+    },
+    "compdf-pdf-to-markdown": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-pdf-to-markdown/SKILL.md",
+      "computedHash": "f3212f3175d5456cea1154ddaeec08687799ec7ea5c72452106e89bfabd2b641"
+    },
+    "compdf-pdf-to-word": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-pdf-to-word/SKILL.md",
+      "computedHash": "bf579cfbc62deb1cf3a68b9cee4a2660f62069339a2c1988810476d0da24e03a"
+    },
+    "compdf-toolkit": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-toolkit/SKILL.md",
+      "computedHash": "3fbb5da9f553bf67023210aa28a32891594724ba60f46f566f8a4e7ec7c6aba8"
+    },
+    "compdf-word-to-pdf": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compdf-word-to-pdf/SKILL.md",
+      "computedHash": "66b5406f4437ffd31b11f2391736c3a8754a41fa6e31c694b0e2bd9b030d69e1"
+    },
+    "pdf-converter": {
+      "source": "ComPDFKit/compdf-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pdf-converter/SKILL.md",
+      "computedHash": "de58164e1ea9d536fba62db806614c9e15722ad488c4bb1be1839f99f929bda8"
+    }
+  }
+}
