@@ -2,34 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMahasiswaRequest;
+use App\Http\Requests\UpdateMahasiswaRequest;
+use App\Http\Resources\MahasiswaResource;
+use App\Models\Mahasiswa;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MahasiswaController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $daftarMahasiswa = [
-            ['nim' => 'H1A123001', 'nama' => 'Andi Prasetyo', 'angkatan' => 2023],
-            ['nim' => 'H1A123002', 'nama' => 'Bunga Lestari', 'angkatan' => 2023],
-            ['nim' => 'H1A123003', 'nama' => 'Citra Ramadhani', 'angkatan' => 2024],
-        ];
+        $kueri = Mahasiswa::with('programStudi');
 
-        return view('mahasiswa.index', ['daftarMahasiswa' => $daftarMahasiswa]);
+        if ($request->filled('cari')) {
+            $kataKunci = $request->query('cari');
+            $kueri->where(function ($sub) use ($kataKunci) {
+                $sub->where('nama', 'like', '%' . $kataKunci . '%')
+                    ->orWhere('nim', 'like', '%' . $kataKunci . '%');
+            });
+        }
+
+        if ($request->filled('angkatan')) {
+            $kueri->where('angkatan', $request->integer('angkatan'));
+        }
+
+        if ($request->filled('program_studi_id')) {
+            $kueri->where('program_studi_id', $request->integer('program_studi_id'));
+        }
+
+        $urutan = $request->query('urut', 'nama');
+        $arah = $request->query('arah', 'asc');
+        $kolomDiizinkan = ['nama', 'nim', 'angkatan', 'ipk'];
+
+        if (in_array($urutan, $kolomDiizinkan, true)) {
+            $kueri->orderBy($urutan, $arah === 'desc' ? 'desc' : 'asc');
+        }
+
+        $perHalaman = min($request->integer('per_halaman', 10), 100);
+
+        return MahasiswaResource::collection($kueri->paginate($perHalaman));
     }
 
-    public function show(string $nim)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreMahasiswaRequest $request): JsonResponse
     {
-        return view('mahasiswa.show', ['nim' => $nim]);
-    }
-
-    public function cari(Request $request)
-    {
-        $kataKunci = $request->query('q', '');
+        $mahasiswa = Mahasiswa::create($request->validated());
+        $mahasiswa->load('programStudi');
 
         return response()->json([
-            'kata_kunci' => $kataKunci,
-            'metode' => $request->method(),
-            'path' => $request->path(),
+            'sukses' => true,
+            'pesan'  => 'Data mahasiswa berhasil dibuat',
+            'data'   => new MahasiswaResource($mahasiswa),
+        ], 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Mahasiswa $mahasiswa): JsonResponse
+    {
+        $mahasiswa->load('programStudi');
+
+        return response()->json([
+            'sukses' => true,
+            'data'   => new MahasiswaResource($mahasiswa),
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateMahasiswaRequest $request, Mahasiswa $mahasiswa): JsonResponse
+    {
+        $mahasiswa->update($request->validated());
+        $mahasiswa->load('programStudi');
+
+        return response()->json([
+            'sukses' => true,
+            'pesan'  => 'Data mahasiswa berhasil diperbarui',
+            'data'   => new MahasiswaResource($mahasiswa),
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Mahasiswa $mahasiswa): JsonResponse
+    {
+        $mahasiswa->delete();
+
+        return response()->json([
+            'sukses' => true,
+            'pesan'  => 'Data mahasiswa berhasil dihapus',
         ]);
     }
 }

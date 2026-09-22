@@ -1,0 +1,121 @@
+{
+  "info": {
+    "_postman_id": "430f3459-d7a9-433b-9c5e-8d4a69b4d124",
+    "name": "Pemweb-II API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58425442",
+    "_collection_link": "https://go.postman.co/collection/58425442-430f3459-d7a9-433b-9c5e-8d4a69b4d124?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "LIHAT MAHASISWA",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "KIRIM MAHASISWA",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n \"program_studi_id\": 1,\n \"nim\": \"H1A125999\",\n \"nama\": \"Dewi Anggraini\",\n \"email\": \"dewi.anggraini@example.com\",\n \"angkatan\": 2025,\n \"ipk\": 3.65\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_URL}/mahasiswa",
+          "host": [
+            "{{BASE_URL}"
+          ],
+          "path": [
+            "mahasiswa"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UBAH DATA MAHASISWA",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"ipk\": 3.90}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/mahasiswa/1",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "mahasiswa",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "HAPUS DATA MAHASISWA",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/mahasiswa",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "mahasiswa"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": ""
+    }
+  ]
+}
