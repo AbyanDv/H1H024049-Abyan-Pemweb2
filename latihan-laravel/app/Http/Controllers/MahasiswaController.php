@@ -19,6 +19,12 @@ class MahasiswaController extends Controller
     {
         $kueri = Mahasiswa::with('programStudi');
 
+        if ($request->filled('fields')) {
+            $fields = explode(',', $request->query('fields'));
+            $allowedFields = ['id', 'nim', 'nama', 'email', 'angkatan', 'ipk', 'aktif', 'program_studi_id', 'created_at'];
+            $kueri->select(array_intersect($fields, $allowedFields));
+        }
+
         if ($request->filled('cari')) {
             $kataKunci = $request->query('cari');
             $kueri->where(function ($sub) use ($kataKunci) {
