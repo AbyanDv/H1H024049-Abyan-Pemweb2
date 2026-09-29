@@ -1,34 +1,34 @@
 <?php
-
-use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\MatakuliahController;
-use App\Models\ProgramStudi;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MahasiswaController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-
-Route::get('/', function () {
-    return response()->json([
-        'sukses' => true,
-        'pesan'  => 'API Pemweb II aktif',
-        'waktu'  => now()->toIso8601String(),
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/profil', [AuthController::class, 'profil']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/logout-semua', [
+        AuthController::class,
+        'logoutSemua'
     ]);
-});
-
-Route::apiResource('mahasiswa', MahasiswaController::class);
-Route::apiResource('matakuliah', MatakuliahController::class);
-
-Route::get('/program-studi/{programStudi}/mahasiswa', function (ProgramStudi $programStudi, Request $request) {
-    $perHalaman = min($request->integer('per_halaman', 10), 100);
-    $mahasiswa = $programStudi->mahasiswa()->paginate($perHalaman);
-
-    return response()->json([
-        'sukses' => true,
-        'data' => \App\Http\Resources\MahasiswaResource::collection($mahasiswa),
-        'pagination' => [
-            'total' => $mahasiswa->total(),
-            'halaman_sekarang' => $mahasiswa->currentPage(),
-            'per_halaman' => $mahasiswa->perPage(),
-            'total_halaman' => $mahasiswa->lastPage(),
-        ],
+    Route::get('/mahasiswa', [MahasiswaController::class, 'index']);
+    Route::get('/mahasiswa/{mahasiswa}', [
+        MahasiswaController::class,
+        'show'
     ]);
+    Route::middleware('ability:mahasiswa:tulis')->group(function () {
+        Route::post('/mahasiswa', [MahasiswaController::class, 'store']);
+        Route::put('/mahasiswa/{mahasiswa}', [
+            MahasiswaController::class,
+            'update'
+        ]);
+        Route::patch('/mahasiswa/{mahasiswa}', [
+            MahasiswaController::class,
+            'update'
+        ]);
+        Route::delete('/mahasiswa/{mahasiswa}', [
+            MahasiswaController::class,
+            'destroy'
+        ]);
+    });
 });
