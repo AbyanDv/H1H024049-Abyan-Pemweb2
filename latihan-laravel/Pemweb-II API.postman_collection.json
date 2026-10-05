@@ -2,120 +2,216 @@
   "info": {
     "_postman_id": "430f3459-d7a9-433b-9c5e-8d4a69b4d124",
     "name": "Pemweb-II API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "58425442",
-    "_collection_link": "https://go.postman.co/collection/58425442-430f3459-d7a9-433b-9c5e-8d4a69b4d124?source=collection_link"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:8000/api" },
+    { "key": "TOKEN_ADMIN", "value": "" },
+    { "key": "TOKEN_MAHASISWA", "value": "" }
+  ],
   "item": [
     {
-      "name": "LIHAT MAHASISWA",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": ""
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "KIRIM MAHASISWA",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+      "name": "AUTH",
+      "item": [
+        {
+          "name": "1-Login Berhasil (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] }
           },
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n \"program_studi_id\": 1,\n \"nim\": \"H1A125999\",\n \"nama\": \"Dewi Anggraini\",\n \"email\": \"dewi.anggraini@example.com\",\n \"angkatan\": 2025,\n \"ipk\": 3.65\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login berhasil 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Ada token', () => { const j = pm.response.json(); pm.expect(j.data.token).to.be.a('string'); });",
+                  "const j = pm.response.json(); if (j.data && j.data.token) pm.collectionVariables.set('TOKEN_ADMIN', j.data.token);"
+                ]
+              }
             }
-          }
-        },
-        "url": {
-          "raw": "{{BASE_URL}/mahasiswa",
-          "host": [
-            "{{BASE_URL}"
           ],
-          "path": [
-            "mahasiswa"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "UBAH DATA MAHASISWA",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json"
+          "response": []
+        },
+        {
+          "name": "2-Login Gagal (password salah)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"salah1234\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] }
           },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"ipk\": 3.90}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Login gagal 401', () => pm.response.to.have.status(401));"] }
             }
-          }
-        },
-        "url": {
-          "raw": "{{BASE_URL}}/mahasiswa/1",
-          "host": [
-            "{{BASE_URL}}"
           ],
-          "path": [
-            "mahasiswa",
-            "1"
-          ]
+          "response": []
+        },
+        {
+          "name": "3-Akses Tanpa Token (profil)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/profil", "host": ["{{BASE_URL}}"], "path": ["auth", "profil"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Tanpa token 401', () => pm.response.to.have.status(401));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "4-Profil Dengan Token",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "url": { "raw": "{{BASE_URL}}/auth/profil", "host": ["{{BASE_URL}}"], "path": ["auth", "profil"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Profil 200', () => pm.response.to.have.status(200));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "5-Ubah Password Berhasil",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"kata_sandi_lama\": \"password123\",\n  \"kata_sandi_baru\": \"password456\",\n  \"kata_sandi_baru_confirmation\": \"password456\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/auth/password", "host": ["{{BASE_URL}}"], "path": ["auth", "password"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Ubah password 200', () => pm.response.to.have.status(200));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "6-Ubah Password Lama Salah",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"kata_sandi_lama\": \"salah1234\",\n  \"kata_sandi_baru\": \"password789\",\n  \"kata_sandi_baru_confirmation\": \"password789\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/auth/password", "host": ["{{BASE_URL}}"], "path": ["auth", "password"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Password lama salah 422', () => pm.response.to.have.status(422));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "7-Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "url": { "raw": "{{BASE_URL}}/auth/logout", "host": ["{{BASE_URL}}"], "path": ["auth", "logout"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Logout 200', () => pm.response.to.have.status(200));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "8-Akses Setelah Logout (token kadaluarsa)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "url": { "raw": "{{BASE_URL}}/auth/profil", "host": ["{{BASE_URL}}"], "path": ["auth", "profil"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Token bekas logout 401', () => pm.response.to.have.status(401));"] }
+            }
+          ],
+          "response": []
         }
-      },
-      "response": []
+      ]
     },
     {
-      "name": "HAPUS DATA MAHASISWA",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "url": {
-          "raw": "{{BASE_URL}}/mahasiswa",
-          "host": [
-            "{{BASE_URL}}"
+      "name": "OTORISASI-MAHASISWA",
+      "item": [
+        {
+          "name": "9-Login Sebagai Mahasiswa",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"mahasiswa@example.com\",\n  \"password\": \"password123\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login mahasiswa 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json(); if (j.data && j.data.token) pm.collectionVariables.set('TOKEN_MAHASISWA', j.data.token);"
+                ]
+              }
+            }
           ],
-          "path": [
-            "mahasiswa"
-          ]
+          "response": []
+        },
+        {
+          "name": "10-Hapus Mahasiswa Tanpa Kemampuan Cukup (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_MAHASISWA}}", "type": "string" }] },
+            "url": { "raw": "{{BASE_URL}}/mahasiswa/1", "host": ["{{BASE_URL}}"], "path": ["mahasiswa", "1"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.test('Ditolak 403', () => pm.expect([401, 403]).to.include(pm.response.code));"] }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "11-KIRIM MAHASISWA",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "body": { "mode": "raw", "raw": "{\n \"program_studi_id\": 1,\n \"nim\": \"H1A125999\",\n \"nama\": \"Dewi Anggraini\",\n \"email\": \"dewi.anggraini@example.com\",\n \"angkatan\": 2025,\n \"ipk\": 3.65\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{BASE_URL}}/mahasiswa", "host": ["{{BASE_URL}}"], "path": ["mahasiswa"] }
+          },
+          "response": []
+        },
+        {
+          "name": "12-HAPUS DATA MAHASISWA (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{TOKEN_ADMIN}}", "type": "string" }] },
+            "url": { "raw": "{{BASE_URL}}/mahasiswa/1", "host": ["{{BASE_URL}}"], "path": ["mahasiswa", "1"] }
+          },
+          "response": []
         }
-      },
-      "response": []
-    }
-  ],
-  "variable": [
-    {
-      "key": "BASE_URL",
-      "value": ""
+      ]
     }
   ]
 }

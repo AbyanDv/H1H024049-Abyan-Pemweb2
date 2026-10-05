@@ -70,6 +70,7 @@ class AuthController extends Controller
             'token-perangkat',
             $kemampuan
         )->plainTextToken;
+        $pengguna->forceFill(['terakhir_login' => now()])->save();
         return response()->json([
             'sukses' => true,
             'pesan' => 'Login berhasil',
@@ -95,8 +96,39 @@ class AuthController extends Controller
                 'nama' => $pengguna->name,
                 'email' => $pengguna->email,
                 'peran' => $pengguna->peran,
+                'terakhir_login' => $pengguna->terakhir_login,
                 'kemampuan' => $pengguna->currentAccessToken()->abilities,
             ],
+        ]);
+    }
+
+    public function ubahPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'kata_sandi_lama' => ['required', 'string'],
+            'kata_sandi_baru' => [
+                'required',
+                'string',
+                'confirmed',
+                Password::min(8)->letters()->numbers(),
+            ],
+        ]);
+
+        $pengguna = $request->user();
+
+        if (Hash::check($data['kata_sandi_lama'], $pengguna->password) === false) {
+            return response()->json([
+                'sukses' => false,
+                'pesan' => 'Kata sandi lama tidak sesuai',
+            ], 422);
+        }
+
+        $pengguna->password = Hash::make($data['kata_sandi_baru']);
+        $pengguna->save();
+
+        return response()->json([
+            'sukses' => true,
+            'pesan' => 'Kata sandi berhasil diubah',
         ]);
     }
 

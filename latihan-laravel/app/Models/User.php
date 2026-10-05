@@ -29,12 +29,14 @@ class User extends Authenticatable
         'email',
         'password',
         'peran',
+        'terakhir_login',
     ];
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'terakhir_login' => 'datetime',
         ];
     }
 }

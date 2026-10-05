@@ -6,6 +6,7 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/profil', [AuthController::class, 'profil']);
+    Route::put('/auth/password', [AuthController::class, 'ubahPassword']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/logout-semua', [
         AuthController::class,
@@ -26,9 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
             MahasiswaController::class,
             'update'
         ]);
-        Route::delete('/mahasiswa/{mahasiswa}', [
-            MahasiswaController::class,
-            'destroy'
-        ]);
     });
+    Route::delete('/mahasiswa/{mahasiswa}', [
+        MahasiswaController::class,
+        'destroy'
+    ])->middleware(['ability:mahasiswa:tulis', 'peran.admin']);
 });
