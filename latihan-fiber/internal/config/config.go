@@ -9,17 +9,36 @@ import (
 type Konfigurasi struct {
 	NamaAplikasi string
 	Port         string
+	Lingkungan   string
+	KunciApi     string
+	DbHost       string
+	DbPort       string
+	DbNama       string
+	DbUser       string
+	DbSandi      string
 }
 
 func Muat() Konfigurasi {
 	godotenv.Load()
-	nama := os.Getenv("APP_NAME")
-	if nama == "" {
-		nama = "Pemweb2 Fiber API"
+	return Konfigurasi{
+		NamaAplikasi: ambil("APP_NAME", "Fiber API"),
+		Port:         ambil("APP_PORT", "3000"),
+		Lingkungan:   ambil("APP_ENV", "local"),
+		KunciApi:     ambil("API_KEY", ""),
+		DbHost:       ambil("DB_HOST", "127.0.0.1"),
+		DbPort:       ambil("DB_PORT", "3306"),
+		DbNama:       ambil("DB_NAME", "pemweb2_fiber"),
+		DbUser:       ambil("DB_USER", "root"),
+		DbSandi:      ambil("DB_PASS", ""),
 	}
-	port := os.Getenv("APP_PORT")
-	if port == "" {
-		port = "3000"
+}
+
+func ambil(kunci string, bawaan string) string {
+	nilai := os.Getenv(kunci)
+
+	if nilai == "" {
+		return bawaan
 	}
-	return Konfigurasi{NamaAplikasi: nama, Port: port}
+
+	return nilai
 }
