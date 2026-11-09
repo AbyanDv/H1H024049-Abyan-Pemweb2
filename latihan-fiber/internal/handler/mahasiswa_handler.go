@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strconv"
 
-	"latihan-fiber/internal/model"
-	"latihan-fiber/internal/repository"
+	"latihan-fiber-api/internal/model"
+	"latihan-fiber-api/internal/repository"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -15,6 +15,7 @@ func DaftarMahasiswa(c fiber.Ctx) error {
 	halaman, _ := strconv.Atoi(c.Query("halaman", "1"))
 	perHalaman, _ := strconv.Atoi(c.Query("per_halaman", "10"))
 	angkatan, _ := strconv.Atoi(c.Query("angkatan", "0"))
+
 	if halaman < 1 {
 		halaman = 1
 	}
@@ -22,18 +23,13 @@ func DaftarMahasiswa(c fiber.Ctx) error {
 		perHalaman = 10
 	}
 
-	urut := c.Query("urut", "nama")
-	if urut != "nama" && urut != "ipk" {
-		return fiber.NewError(fiber.StatusBadRequest, "Parameter urut harus bernama atau ipk")
-	}
-
 	filter := repository.FilterMahasiswa{
 		Cari:       c.Query("cari", ""),
 		Angkatan:   angkatan,
 		Halaman:    halaman,
 		PerHalaman: perHalaman,
-		Urut:       urut,
 	}
+
 	daftar, total, err := repository.Ambil(filter)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mengambil data")
@@ -76,25 +72,9 @@ func DetailMahasiswa(c fiber.Ctx) error {
 	})
 }
 
-func DetailMahasiswaNim(c fiber.Ctx) error {
-	nim := c.Params("nim")
-
-	mahasiswa, err := repository.AmbilPerNim(nim)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fiber.NewError(fiber.StatusNotFound, "Mahasiswa tidak ditemukan")
-		}
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mengambil data")
-	}
-
-	return c.JSON(fiber.Map{
-		"sukses": true,
-		"data":   mahasiswa,
-	})
-}
-
 func BuatMahasiswa(c fiber.Ctx) error {
-	var permintaan PermintaanMahasiswa
+	var permintaan model.PermintaanMahasiswa
+
 	err := c.Bind().Body(&permintaan)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Format body tidak valid")
@@ -114,6 +94,7 @@ func BuatMahasiswa(c fiber.Ctx) error {
 		Ipk:            permintaan.Ipk,
 		Aktif:          aktif,
 	}
+
 	err = repository.Simpan(&mahasiswa)
 	if err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, "Gagal menyimpan data, periksa keunikan NIM dan email")
@@ -137,7 +118,7 @@ func PerbaruiMahasiswa(c fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "Mahasiswa tidak ditemukan")
 	}
 
-	var permintaan PermintaanMahasiswa
+	var permintaan model.PermintaanMahasiswa
 	err = c.Bind().Body(&permintaan)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Format body tidak valid")
