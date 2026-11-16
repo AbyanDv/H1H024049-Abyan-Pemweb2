@@ -4,8 +4,9 @@ import (
 	"errors"
 	"strconv"
 
-	"latihan-fiber-api/internal/model"
-	"latihan-fiber-api/internal/repository"
+	"latihan-fiber/internal/model"
+	"latihan-fiber/internal/repository"
+	"latihan-fiber/internal/validasi"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -73,11 +74,20 @@ func DetailMahasiswa(c fiber.Ctx) error {
 }
 
 func BuatMahasiswa(c fiber.Ctx) error {
-	var permintaan model.PermintaanMahasiswa
+	var permintaan PermintaanMahasiswa
 
 	err := c.Bind().Body(&permintaan)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Format body tidak valid")
+	}
+
+	galat := validasi.Periksa(permintaan)
+	if galat != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"sukses": false,
+			"pesan":  "Data yang dikirim tidak valid",
+			"galat":  galat,
+		})
 	}
 
 	aktif := true
@@ -118,7 +128,7 @@ func PerbaruiMahasiswa(c fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "Mahasiswa tidak ditemukan")
 	}
 
-	var permintaan model.PermintaanMahasiswa
+	var permintaan PermintaanMahasiswa
 	err = c.Bind().Body(&permintaan)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Format body tidak valid")
@@ -174,5 +184,25 @@ func HapusMahasiswa(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"sukses": true,
 		"pesan":  "Data mahasiswa berhasil dihapus",
+	})
+}
+
+func PulihkanMahasiswa(c fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "ID harus berupa angka")
+	}
+
+	err = repository.Pulihkan(uint(id))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return fiber.NewError(fiber.StatusNotFound, "Mahasiswa tidak ditemukan")
+		}
+		return fiber.NewError(fiber.StatusInternalServerError, "Gagal memulihkan data")
+	}
+
+	return c.JSON(fiber.Map{
+		"sukses": true,
+		"pesan":  "Data mahasiswa berhasil dipulihkan",
 	})
 }
